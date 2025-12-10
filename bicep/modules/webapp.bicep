@@ -11,10 +11,10 @@ param keyVaultName string
 param keyVaultId string
 
 @description('The SKU name (F1, B1, S1)')
-param skuName string = 'F1'
+param skuName string = 'B1'
 
 @description('The SKU tier (Free, Basic, Standard)')
-param skuTier string = 'Free'
+param skuTier string = 'Basic'
 
 var appServicePlanName = 'asp-mdmportal-${environmentName}'
 var webAppName = 'core-apis-${environmentName}'
