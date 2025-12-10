@@ -1,5 +1,5 @@
 @description('The environment name (dev, qa, prod)')
-// Trigger deployment
+// Deployment trigger - attempting final clean deployment
 param environmentName string = 'dev'
 
 @description('The Azure region for compute/platform resources')
