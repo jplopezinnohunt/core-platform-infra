@@ -11,7 +11,7 @@ param keyVaultName string
 param keyVaultId string
 
 var appServicePlanName = 'asp-mdmportal-${environmentName}'
-var webAppName = 'vendor-mdm-api-${environmentName}'
+var webAppName = 'core-apis-${environmentName}'
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: appServicePlanName
