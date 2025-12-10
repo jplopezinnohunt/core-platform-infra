@@ -55,6 +55,17 @@ module serviceBus 'modules/servicebus.bicep' = {
   }
 }
 
+// Azure Functions for background processing
+module functionApp 'modules/functionapp-consumption.bicep' = {
+  name: 'functionAppDeploy'
+  params: {
+    environmentName: environmentName
+    location: location
+    storageAccountName: 'stprocessors${environmentName}'
+    appInsightsInstrumentationKey: '' // Will be populated from existing App Insights
+    appInsightsConnectionString: '' // Will be populated from existing App Insights
+  }
+}
 // Note: Container App 'vendor-mdm-api-dev' is in failed state, cannot reference it
 // Commenting out until Container App is fixed manually in Azure Portal
 // resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' existing = {
