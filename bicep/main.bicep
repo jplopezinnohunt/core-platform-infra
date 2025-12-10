@@ -2,7 +2,7 @@
 param environmentName string = 'dev'
 
 @description('The Azure region')
-param location string = resourceGroup().location
+param location string = 'eastus2'
 
 @secure()
 @description('SQL Server administrator login')
