@@ -2,11 +2,8 @@
 // Trigger deployment
 param environmentName string = 'dev'
 
-@description('The Azure region')
-param location string = resourceGroup().location
-
-@description('The Azure region for stateful data resources (Cosmos DB, SQL)')
-param dataLocation string = 'eastus2'
+@description('The Azure region for all resources')
+param location string = 'eastus2'
 
 @secure()
 @description('SQL Server administrator login')
@@ -37,7 +34,7 @@ module cosmos 'modules/cosmos.bicep' = {
   name: 'cosmosDeploy'
   params: {
     environmentName: environmentName
-    location: dataLocation
+    location: location
   }
 }
 
@@ -45,7 +42,7 @@ module sql 'modules/sql.bicep' = {
   name: 'sqlDeploy'
   params: {
     environmentName: environmentName
-    location: dataLocation
+    location: location
     adminLogin: sqlAdminLogin
     adminPassword: sqlAdminPassword
   }
