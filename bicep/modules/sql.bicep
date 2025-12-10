@@ -28,13 +28,16 @@ resource sqlDb 'Microsoft.Sql/servers/databases@2022-05-01-preview' = {
   name: dbName
   location: location
   sku: {
-    name: 'Basic'
-    tier: 'Basic'
-    capacity: 5
+    name: 'GP_S_Gen5'
+    tier: 'GeneralPurpose'
+    family: 'Gen5'
+    capacity: 1
   }
   properties: {
     collation: 'SQL_Latin1_General_CP1_CI_AS'
     maxSizeBytes: 2147483648 // 2 GB
+    autoPauseDelay: 60 // Auto-pause after 60 minutes of inactivity
+    minCapacity: 0.5 // Minimum 0.5 vCores when active
   }
 }
 
