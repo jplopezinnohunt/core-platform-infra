@@ -5,6 +5,9 @@ param environmentName string = 'dev'
 @description('The Azure region')
 param location string = resourceGroup().location
 
+@description('The Azure region for stateful data resources (Cosmos DB, SQL)')
+param dataLocation string = 'eastus2'
+
 @secure()
 @description('SQL Server administrator login')
 param sqlAdminLogin string = 'mdmadmin'
@@ -34,7 +37,7 @@ module cosmos 'modules/cosmos.bicep' = {
   name: 'cosmosDeploy'
   params: {
     environmentName: environmentName
-    location: location
+    location: dataLocation
   }
 }
 
@@ -42,7 +45,7 @@ module sql 'modules/sql.bicep' = {
   name: 'sqlDeploy'
   params: {
     environmentName: environmentName
-    location: location
+    location: dataLocation
     adminLogin: sqlAdminLogin
     adminPassword: sqlAdminPassword
   }
@@ -50,6 +53,14 @@ module sql 'modules/sql.bicep' = {
 
 module serviceBus 'modules/servicebus.bicep' = {
   name: 'serviceBusDeploy'
+  params: {
+    environmentName: environmentName
+    location: location
+  }
+}
+
+module keyVault 'modules/keyvault.bicep' = {
+  name: 'keyVaultDeploy'
   params: {
     environmentName: environmentName
     location: location
@@ -71,14 +82,6 @@ module webApp 'modules/webapp.bicep' = {
     location: location
     keyVaultName: keyVault.outputs.keyVaultName
     keyVaultId: keyVault.outputs.keyVaultResourceId
-  }
-}
-
-module keyVault 'modules/keyvault.bicep' = {
-  name: 'keyVaultDeploy'
-  params: {
-    environmentName: environmentName
-    location: location
   }
 }
 
