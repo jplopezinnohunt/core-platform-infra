@@ -63,6 +63,16 @@ module functionApp 'modules/functionapp.bicep' = {
   }
 }
 
+module webApp 'modules/webapp.bicep' = {
+  name: 'webAppDeploy'
+  params: {
+    environmentName: environmentName
+    location: location
+    keyVaultName: keyVault.outputs.keyVaultName
+    keyVaultId: keyVault.outputs.keyVaultResourceId
+  }
+}
+
 module keyVault 'modules/keyvault.bicep' = {
   name: 'keyVaultDeploy'
   params: {
