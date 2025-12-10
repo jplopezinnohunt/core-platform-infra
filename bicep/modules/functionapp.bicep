@@ -4,6 +4,12 @@ param environmentName string
 @description('The Azure region')
 param location string
 
+@description('The SKU name (F1, B1, S1, Y1)')
+param skuName string = 'F1'
+
+@description('The SKU tier (Free, Basic, Standard, Dynamic)')
+param skuTier string = 'Free'
+
 var appName = 'core-artifact-processors-${environmentName}'
 var storageAccountName = 'mdmst${uniqueString(resourceGroup().id)}'
 var appServicePlanName = 'mdmportal-asp-${environmentName}'
@@ -21,8 +27,8 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: appServicePlanName
   location: location
   sku: {
-    name: 'B1'
-    tier: 'Basic'
+    name: skuName
+    tier: skuTier
   }
   properties: {}
 }
