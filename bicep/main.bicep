@@ -2,6 +2,9 @@
 // Trigger deployment
 param environmentName string = 'dev'
 
+@description('The Azure region')
+param location string = resourceGroup().location
+
 @secure()
 @description('SQL Server administrator login')
 param sqlAdminLogin string = 'mdmadmin'
@@ -31,7 +34,7 @@ module cosmos 'modules/cosmos.bicep' = {
   name: 'cosmosDeploy'
   params: {
     environmentName: environmentName
-    location: 'eastus2' // Existing resource is in eastus2
+    location: location
   }
 }
 
@@ -39,7 +42,7 @@ module sql 'modules/sql.bicep' = {
   name: 'sqlDeploy'
   params: {
     environmentName: environmentName
-    location: 'eastus2' // Existing resource is in eastus2
+    location: location
     adminLogin: sqlAdminLogin
     adminPassword: sqlAdminPassword
   }
@@ -49,7 +52,7 @@ module serviceBus 'modules/servicebus.bicep' = {
   name: 'serviceBusDeploy'
   params: {
     environmentName: environmentName
-    location: 'eastus2'
+    location: location
   }
 }
 
@@ -57,7 +60,7 @@ module functionApp 'modules/functionapp.bicep' = {
   name: 'functionAppDeploy'
   params: {
     environmentName: environmentName
-    location: 'eastus2'
+    location: location
   }
 }
 
@@ -65,7 +68,7 @@ module webApp 'modules/webapp.bicep' = {
   name: 'webAppDeploy'
   params: {
     environmentName: environmentName
-    location: 'eastus2'
+    location: location
     keyVaultName: keyVault.outputs.keyVaultName
     keyVaultId: keyVault.outputs.keyVaultResourceId
   }
@@ -75,7 +78,7 @@ module keyVault 'modules/keyvault.bicep' = {
   name: 'keyVaultDeploy'
   params: {
     environmentName: environmentName
-    location: 'eastus2'
+    location: location
   }
 }
 
