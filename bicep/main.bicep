@@ -2,9 +2,6 @@
 // Trigger deployment
 param environmentName string = 'dev'
 
-@description('The Azure region')
-param location string = 'eastus2'
-
 @secure()
 @description('SQL Server administrator login')
 param sqlAdminLogin string = 'mdmadmin'
@@ -60,7 +57,7 @@ module functionApp 'modules/functionapp.bicep' = {
   name: 'functionAppDeploy'
   params: {
     environmentName: environmentName
-    location: 'eastus' // Co-locate with Service Bus/KV
+    location: 'eastus2' // Move to eastus2 to avoid eastus quota issues and colocate with DB
   }
 }
 
@@ -68,7 +65,7 @@ module webApp 'modules/webapp.bicep' = {
   name: 'webAppDeploy'
   params: {
     environmentName: environmentName
-    location: 'eastus' // Co-locate with Service Bus/KV
+    location: 'eastus2' // Move to eastus2 to colocate with DB
     keyVaultName: keyVault.outputs.keyVaultName
     keyVaultId: keyVault.outputs.keyVaultResourceId
   }
