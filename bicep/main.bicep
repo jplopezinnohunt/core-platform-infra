@@ -34,7 +34,7 @@ module cosmos 'modules/cosmos.bicep' = {
   name: 'cosmosDeploy'
   params: {
     environmentName: environmentName
-    location: location
+    location: 'eastus2' // Existing resource is in eastus2
   }
 }
 
@@ -42,7 +42,7 @@ module sql 'modules/sql.bicep' = {
   name: 'sqlDeploy'
   params: {
     environmentName: environmentName
-    location: location
+    location: 'eastus2' // Existing resource is in eastus2
     adminLogin: sqlAdminLogin
     adminPassword: sqlAdminPassword
   }
@@ -52,7 +52,7 @@ module serviceBus 'modules/servicebus.bicep' = {
   name: 'serviceBusDeploy'
   params: {
     environmentName: environmentName
-    location: location
+    location: 'eastus' // Existing resource is in eastus
   }
 }
 
@@ -60,7 +60,7 @@ module functionApp 'modules/functionapp.bicep' = {
   name: 'functionAppDeploy'
   params: {
     environmentName: environmentName
-    location: location
+    location: 'eastus' // Co-locate with Service Bus/KV
   }
 }
 
@@ -68,7 +68,7 @@ module webApp 'modules/webapp.bicep' = {
   name: 'webAppDeploy'
   params: {
     environmentName: environmentName
-    location: location
+    location: 'eastus' // Co-locate with Service Bus/KV
     keyVaultName: keyVault.outputs.keyVaultName
     keyVaultId: keyVault.outputs.keyVaultResourceId
   }
@@ -78,7 +78,7 @@ module keyVault 'modules/keyvault.bicep' = {
   name: 'keyVaultDeploy'
   params: {
     environmentName: environmentName
-    location: location
+    location: 'eastus' // Existing resource is in eastus
   }
 }
 
