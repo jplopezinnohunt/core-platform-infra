@@ -5,10 +5,10 @@ param environmentName string
 param location string
 
 @description('The SKU name (F1, B1, S1, Y1)')
-param skuName string = 'B1'
+param skuName string = 'F1'
 
 @description('The SKU tier (Free, Basic, Standard, Dynamic)')
-param skuTier string = 'Basic'
+param skuTier string = 'Free'
 
 var appName = 'core-artifact-processors-${environmentName}'
 var storageAccountName = 'mdmst${uniqueString(resourceGroup().id)}'
