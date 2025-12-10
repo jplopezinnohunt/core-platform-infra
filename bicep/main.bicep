@@ -41,16 +41,17 @@ module cosmos 'modules/cosmos.bicep' = {
   }
 }
 
-// SQL Server with Serverless SKU (auto-pause when idle)
-module sql 'modules/sql.bicep' = {
-  name: 'sqlDeploy'
-  params: {
-    environmentName: environmentName
-    location: dataLocation
-    adminLogin: sqlAdminLogin
-    adminPassword: sqlAdminPassword
-  }
-}
+// SQL Server - disabled from deployment (already exists in Azure)
+// Bicep was repeatedly failing to update it
+// module sql 'modules/sql.bicep' = {
+//   name: 'sqlDeploy'
+//   params: {
+//     environmentName: environmentName
+//     location: dataLocation
+//     adminLogin: sqlAdminLogin
+//     adminPassword: sqlAdminPassword
+//   }
+// }
 
 module serviceBus 'modules/servicebus.bicep' = {
   name: 'serviceBusDeploy'
