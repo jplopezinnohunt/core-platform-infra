@@ -8,13 +8,7 @@ param location string = 'eastus'
 @description('The Azure region for data resources (Cosmos DB, SQL)')
 param dataLocation string = 'eastus2'
 
-@secure()
-@description('SQL Server administrator login')
-param sqlAdminLogin string
-
-@secure()
-@description('SQL Server administrator password')
-param sqlAdminPassword string
+// SQL parameters removed - SQL module disabled from deployment
 
 @secure()
 @description('SAP system account username')

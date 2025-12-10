@@ -7,12 +7,8 @@ param environmentName = 'dev'
 // ACTUALIZAR ANTES DE DEPLOYMENT
 // ============================================
 
-// SQL Server Admin Login
-param sqlAdminLogin = 'mdmadmin'
+// SQL parameters removed - SQL Server already exists, not deploying via Bicep
 
-// SQL Server Admin Password
-// Nota: Se usa Azure AD Authentication después, pero SQL Server requiere un admin password inicial
-param sqlAdminPassword = 'PLACEHOLDER-UPDATE-BEFORE-DEPLOY'
 
 // SAP Connection Parameters - ACTUALIZAR CON VALORES REALES
 param sapHostname = 'sap-dev.company.com'              // ← Tu SAP hostname
