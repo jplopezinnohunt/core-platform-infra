@@ -1,4 +1,5 @@
 @description('The environment name (dev, qa, prod)')
+// Trigger deployment
 param environmentName string = 'dev'
 
 @description('The Azure region')
