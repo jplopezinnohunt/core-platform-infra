@@ -59,15 +59,14 @@ module serviceBus 'modules/servicebus.bicep' = {
   }
 }
 
-// Shared App Service Plan for both Web App and Function App (saves quota)
-resource sharedAppServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
-  name: 'asp-core-platform-${environmentName}'
-  location: location
-  sku: {
-    name: 'B1'
-    tier: 'Basic'
-  }
-  properties: {}
+// Reference existing Container Apps Environment
+resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' existing = {
+  name: 'mdmportal-ca-env-dev'
+}
+
+// Reference existing Container App (API)
+resource apiContainerApp 'Microsoft.App/containerApps@2023-05-01' existing = {
+  name: 'vendor-mdm-api-dev'
 }
 
 module keyVault 'modules/keyvault.bicep' = {
@@ -78,47 +77,26 @@ module keyVault 'modules/keyvault.bicep' = {
   }
 }
 
-module functionApp 'modules/functionapp.bicep' = {
-  name: 'functionAppDeploy'
-  params: {
-    environmentName: environmentName
-    location: location
-    appServicePlanId: sharedAppServicePlan.id
-  }
-}
-
-module webApp 'modules/webapp.bicep' = {
-  name: 'webAppDeploy'
-  params: {
-    environmentName: environmentName
-    location: location
-    keyVaultName: keyVault.outputs.keyVaultName
-    keyVaultId: keyVault.outputs.keyVaultResourceId
-    appServicePlanId: sharedAppServicePlan.id
-  }
-}
-
 // Role Assignments
-// Assign Function App Managed Identity access to Cosmos
+// Assign Container App Managed Identity access to Cosmos
 module cosmosRbac 'modules/cosmos-rbac.bicep' = {
   name: 'cosmosRbacDeploy'
   params: {
     cosmosAccountName: cosmos.outputs.cosmosAccountName
-    principalId: functionApp.outputs.functionAppPrincipalId
+    principalId: apiContainerApp.identity.principalId
   }
 }
 
-// Assign Function App Managed Identity access to Key Vault
+// Assign Container App Managed Identity access to Key Vault
 module keyVaultRbac 'modules/keyvault-rbac.bicep' = {
   name: 'keyVaultRbacDeploy'
   params: {
     keyVaultName: keyVault.outputs.keyVaultName
     keyVaultResourceId: keyVault.outputs.keyVaultResourceId
-    functionAppPrincipalId: functionApp.outputs.functionAppPrincipalId
+    functionAppPrincipalId: apiContainerApp.identity.principalId
+    webAppPrincipalId: apiContainerApp.identity.principalId  // Same app handles both
   }
 }
-
-// Store SAP credentials in Key Vault
 // Store SAP credentials in Key Vault
 module keyVaultSecrets 'modules/keyvault-secrets.bicep' = {
   name: 'keyVaultSecretsDeploy'
@@ -132,7 +110,7 @@ module keyVaultSecrets 'modules/keyvault-secrets.bicep' = {
   }
 }
 
-output functionAppName string = functionApp.outputs.functionAppName
+output containerAppName string = apiContainerApp.name
 output keyVaultName string = keyVault.outputs.keyVaultName
 output keyVaultUri string = keyVault.outputs.keyVaultUri
 output serviceBusNamespaceName string = serviceBus.outputs.serviceBusNamespaceName
