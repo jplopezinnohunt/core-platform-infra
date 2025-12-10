@@ -10,7 +10,7 @@ param dataLocation string = 'eastus2'
 
 @secure()
 @description('SQL Server administrator login')
-param sqlAdminLogin string = 'mdmadmin'
+param sqlAdminLogin string
 
 @secure()
 @description('SQL Server administrator password')
@@ -18,7 +18,7 @@ param sqlAdminPassword string
 
 @secure()
 @description('SAP system account username')
-param sapSystemAccountUsername string = 'SAPVENDORPORTAL'
+param sapSystemAccountUsername string
 
 @secure()
 @description('SAP system account password')
@@ -59,15 +59,15 @@ module serviceBus 'modules/servicebus.bicep' = {
   }
 }
 
-// Reference existing Container Apps Environment
-resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' existing = {
-  name: 'mdmportal-ca-env-dev'
-}
+// Note: Container App 'vendor-mdm-api-dev' is in failed state, cannot reference it
+// Commenting out until Container App is fixed manually in Azure Portal
+// resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' existing = {
+//   name: 'mdmportal-ca-env-dev'
+// }
 
-// Reference existing Container App (API)
-resource apiContainerApp 'Microsoft.App/containerApps@2023-05-01' existing = {
-  name: 'vendor-mdm-api-dev'
-}
+// resource apiContainerApp 'Microsoft.App/containerApps@2023-05-01' existing = {
+//   name: 'vendor-mdm-api-dev'
+// }
 
 module keyVault 'modules/keyvault.bicep' = {
   name: 'keyVaultDeploy'
@@ -78,24 +78,26 @@ module keyVault 'modules/keyvault.bicep' = {
 }
 
 // Role Assignments
+// Note: Skipping Container App RBAC until app is fixed
 // Assign Container App Managed Identity access to Cosmos
-module cosmosRbac 'modules/cosmos-rbac.bicep' = {
-  name: 'cosmosRbacDeploy'
-  params: {
-    cosmosAccountName: cosmos.outputs.cosmosAccountName
-    principalId: apiContainerApp.identity.principalId
-  }
-}
+// module cosmosRbac 'modules/cosmos-rbac.bicep' = {
+//   name: 'cosmosRbacDeploy'
+//   params: {
+//     cosmosAccountName: cosmos.outputs.cosmosAccountName
+//     principalId: apiContainerApp.identity.principalId
+//   }
+// }
 
 // Assign Container App Managed Identity access to Key Vault
-module keyVaultRbac 'modules/keyvault-rbac.bicep' = {
-  name: 'keyVaultRbacDeploy'
-  params: {
-    keyVaultName: keyVault.outputs.keyVaultName
-    keyVaultResourceId: keyVault.outputs.keyVaultResourceId
-    functionAppPrincipalId: apiContainerApp.identity.principalId
-  }
-}
+// module keyVaultRbac 'modules/keyvault-rbac.bicep' = {
+//   name: 'keyVaultRbacDeploy'
+//   params: {
+//     keyVaultName: keyVault.outputs.keyVaultName
+//     keyVaultResourceId: keyVault.outputs.keyVaultResourceId
+//     functionAppPrincipalId: apiContainerApp.identity.principalId
+//   }
+// }
+
 // Store SAP credentials in Key Vault
 module keyVaultSecrets 'modules/keyvault-secrets.bicep' = {
   name: 'keyVaultSecretsDeploy'
@@ -109,7 +111,7 @@ module keyVaultSecrets 'modules/keyvault-secrets.bicep' = {
   }
 }
 
-output containerAppName string = apiContainerApp.name
+// output containerAppName string = apiContainerApp.name  // Commented out - Container App in failed state
 output keyVaultName string = keyVault.outputs.keyVaultName
 output keyVaultUri string = keyVault.outputs.keyVaultUri
 output serviceBusNamespaceName string = serviceBus.outputs.serviceBusNamespaceName
