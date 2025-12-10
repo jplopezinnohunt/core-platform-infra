@@ -10,10 +10,15 @@ var secretsOfficerRoleId = 'b86a8fe4-44ce-4948-aee5-eccb2c155cd7'
 // Key Vault Secrets User - Read secrets
 var secretsUserRoleId = '4633458b-17de-408a-b874-0445c86b69e6'
 
+// Reference existing Key Vault for scope
+resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' existing = {
+  name: keyVaultName
+}
+
 // Assign role to user if provided
 resource userRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (userPrincipalId != '') {
   name: guid(keyVaultResourceId, userPrincipalId, secretsOfficerRoleId)
-  scope: keyVaultResourceId
+  scope: keyVault
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', secretsOfficerRoleId)
     principalId: userPrincipalId
@@ -24,7 +29,7 @@ resource userRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01'
 // Assign role to Function App Managed Identity if provided
 resource functionAppRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (functionAppPrincipalId != '') {
   name: guid(keyVaultResourceId, functionAppPrincipalId, secretsUserRoleId)
-  scope: keyVaultResourceId
+  scope: keyVault
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', secretsUserRoleId)
     principalId: functionAppPrincipalId

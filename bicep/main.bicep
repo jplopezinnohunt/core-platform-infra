@@ -83,19 +83,12 @@ module keyVault 'modules/keyvault.bicep' = {
 
 // Role Assignments
 // Assign Function App Managed Identity access to Cosmos
-var cosmosAccountName = cosmos.outputs.cosmosAccountName
-var roleAssignmentName = guid(cosmosAccountName, functionApp.outputs.functionAppPrincipalId, '00000000-0000-0000-0000-000000000002')
-
-resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2023-04-15' existing = {
-  name: cosmosAccountName
-}
-
-resource cosmosRoleAssignment 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2023-04-15' = {
-  name: '${cosmosAccount.name}/${roleAssignmentName}'
-  properties: {
-    roleDefinitionId: resourceId('Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions', cosmosAccountName, '00000000-0000-0000-0000-000000000002')
+// Assign Function App Managed Identity access to Cosmos
+module cosmosRbac 'modules/cosmos-rbac.bicep' = {
+  name: 'cosmosRbacDeploy'
+  params: {
+    cosmosAccountName: cosmos.outputs.cosmosAccountName
     principalId: functionApp.outputs.functionAppPrincipalId
-    scope: cosmosAccount.id
   }
 }
 
@@ -110,47 +103,16 @@ module keyVaultRbac 'modules/keyvault-rbac.bicep' = {
 }
 
 // Store SAP credentials in Key Vault
-resource keyVaultResource 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
-  name: keyVault.outputs.keyVaultName
-}
-
-resource sapHostnameSecret 'Microsoft.KeyVault/vaults/secrets@2023-02-01' = {
-  parent: keyVaultResource
-  name: 'SAP-Hostname'
-  properties: {
-    value: sapHostname
-  }
-}
-
-resource sapSystemNumberSecret 'Microsoft.KeyVault/vaults/secrets@2023-02-01' = {
-  parent: keyVaultResource
-  name: 'SAP-SystemNumber'
-  properties: {
-    value: sapSystemNumber
-  }
-}
-
-resource sapClientSecret 'Microsoft.KeyVault/vaults/secrets@2023-02-01' = {
-  parent: keyVaultResource
-  name: 'SAP-Client'
-  properties: {
-    value: sapClient
-  }
-}
-
-resource sapUsernameSecret 'Microsoft.KeyVault/vaults/secrets@2023-02-01' = {
-  parent: keyVaultResource
-  name: 'SAP-SystemAccount-Username'
-  properties: {
-    value: sapSystemAccountUsername
-  }
-}
-
-resource sapPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2023-02-01' = {
-  parent: keyVaultResource
-  name: 'SAP-SystemAccount-Password'
-  properties: {
-    value: sapSystemAccountPassword
+// Store SAP credentials in Key Vault
+module keyVaultSecrets 'modules/keyvault-secrets.bicep' = {
+  name: 'keyVaultSecretsDeploy'
+  params: {
+    keyVaultName: keyVault.outputs.keyVaultName
+    sapHostname: sapHostname
+    sapSystemNumber: sapSystemNumber
+    sapClient: sapClient
+    sapSystemAccountUsername: sapSystemAccountUsername
+    sapSystemAccountPassword: sapSystemAccountPassword
   }
 }
 
