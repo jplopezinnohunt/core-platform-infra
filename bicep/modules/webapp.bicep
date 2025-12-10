@@ -10,29 +10,16 @@ param keyVaultName string
 @description('The Resource ID of the existing Key Vault')
 param keyVaultId string
 
-@description('The SKU name (F1, B1, S1)')
-param skuName string = 'F1'
+@description('Existing App Service Plan ID to use (shared with Function App)')
+param appServicePlanId string
 
-@description('The SKU tier (Free, Basic, Standard)')
-param skuTier string = 'Free'
-
-var appServicePlanName = 'asp-mdmportal-${environmentName}'
 var webAppName = 'core-apis-${environmentName}'
-
-resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
-  name: appServicePlanName
-  location: location
-  sku: {
-    name: skuName
-    tier: skuTier
-  }
-}
 
 resource webApp 'Microsoft.Web/sites@2022-03-01' = {
   name: webAppName
   location: location
   properties: {
-    serverFarmId: appServicePlan.id
+    serverFarmId: appServicePlanId
     httpsOnly: true
     siteConfig: {
       netFrameworkVersion: 'v8.0'

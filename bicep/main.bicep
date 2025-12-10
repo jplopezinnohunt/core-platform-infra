@@ -59,6 +59,17 @@ module serviceBus 'modules/servicebus.bicep' = {
   }
 }
 
+// Shared App Service Plan for both Web App and Function App (saves quota)
+resource sharedAppServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
+  name: 'asp-core-platform-${environmentName}'
+  location: location
+  sku: {
+    name: 'B1'
+    tier: 'Basic'
+  }
+  properties: {}
+}
+
 module keyVault 'modules/keyvault.bicep' = {
   name: 'keyVaultDeploy'
   params: {
@@ -72,6 +83,7 @@ module functionApp 'modules/functionapp.bicep' = {
   params: {
     environmentName: environmentName
     location: location
+    appServicePlanId: sharedAppServicePlan.id
   }
 }
 
@@ -82,6 +94,7 @@ module webApp 'modules/webapp.bicep' = {
     location: location
     keyVaultName: keyVault.outputs.keyVaultName
     keyVaultId: keyVault.outputs.keyVaultResourceId
+    appServicePlanId: sharedAppServicePlan.id
   }
 }
 
