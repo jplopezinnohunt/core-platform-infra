@@ -49,7 +49,7 @@ module serviceBus 'modules/servicebus.bicep' = {
   name: 'serviceBusDeploy'
   params: {
     environmentName: environmentName
-    location: 'eastus' // Existing resource is in eastus
+    location: 'eastus2'
   }
 }
 
@@ -57,7 +57,7 @@ module functionApp 'modules/functionapp.bicep' = {
   name: 'functionAppDeploy'
   params: {
     environmentName: environmentName
-    location: 'eastus2' // Move to eastus2 to avoid eastus quota issues and colocate with DB
+    location: 'eastus2'
   }
 }
 
@@ -65,7 +65,7 @@ module webApp 'modules/webapp.bicep' = {
   name: 'webAppDeploy'
   params: {
     environmentName: environmentName
-    location: 'eastus2' // Move to eastus2 to colocate with DB
+    location: 'eastus2'
     keyVaultName: keyVault.outputs.keyVaultName
     keyVaultId: keyVault.outputs.keyVaultResourceId
   }
@@ -75,12 +75,11 @@ module keyVault 'modules/keyvault.bicep' = {
   name: 'keyVaultDeploy'
   params: {
     environmentName: environmentName
-    location: 'eastus' // Existing resource is in eastus
+    location: 'eastus2'
   }
 }
 
 // Role Assignments
-// Assign Function App Managed Identity access to Cosmos
 // Assign Function App Managed Identity access to Cosmos
 module cosmosRbac 'modules/cosmos-rbac.bicep' = {
   name: 'cosmosRbacDeploy'

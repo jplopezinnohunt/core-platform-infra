@@ -10,7 +10,7 @@ param enableSoftDelete bool = true
 @description('Enable purge protection')
 param enablePurgeProtection bool = true
 
-var keyVaultName = 'vendormdm-kv-${environmentName}'
+var keyVaultName = 'vendormdm-kv-${environmentName}-eus2'
 
 // Key Vault
 resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
