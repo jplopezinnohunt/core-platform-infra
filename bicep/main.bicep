@@ -94,7 +94,6 @@ module keyVaultRbac 'modules/keyvault-rbac.bicep' = {
     keyVaultName: keyVault.outputs.keyVaultName
     keyVaultResourceId: keyVault.outputs.keyVaultResourceId
     functionAppPrincipalId: apiContainerApp.identity.principalId
-    webAppPrincipalId: apiContainerApp.identity.principalId  // Same app handles both
   }
 }
 // Store SAP credentials in Key Vault
