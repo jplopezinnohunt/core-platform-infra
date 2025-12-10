@@ -4,7 +4,7 @@ param environmentName string
 @description('The Azure region')
 param location string
 
-var namespaceName = 'mdmportal-sb-${environmentName}-eus2'
+var namespaceName = 'mdmportal-sb-${environmentName}'
 var topicName = 'vendor-changes'
 var subscriptionName = 'sap-integration-${environmentName}'
 var invitationQueueName = 'invitation-emails'
